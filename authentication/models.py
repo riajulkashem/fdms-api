@@ -11,8 +11,6 @@ class User(AbstractUser):
     )
     user_type = models.CharField(max_length=10, choices=RULE_CHOICES)
     phone_number = models.CharField(
-        blank=True,
-        null=True,
         max_length=14,
         validators=[
             RegexValidator(
@@ -21,6 +19,7 @@ class User(AbstractUser):
             MinLengthValidator(limit_value=11),
         ],
     )
+    address = models.CharField(max_length=255)
 
     def __str__(self) -> str:
         return self.get_full_name()
