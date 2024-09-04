@@ -5,9 +5,9 @@ from django.db import models
 
 class User(AbstractUser):
     RULE_CHOICES = (
-        ("Owner", "Owner"),
-        ("Employee", "Employee"),
-        ("Client", "Client"),
+        ("owner", "Owner"),
+        ("employee", "Employee"),
+        ("client", "Client"),
     )
     user_type = models.CharField(max_length=10, choices=RULE_CHOICES)
     phone_number = models.CharField(
