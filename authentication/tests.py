@@ -55,6 +55,7 @@ class LoginViewTests(APITestCase):
         token = Token.objects.get(user=self.user)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["token"], token.key)
+        self.assertEqual(response.data["username"], "testuser")
 
         # Test invalid credentials
         response = self.client.post(

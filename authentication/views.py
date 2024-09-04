@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics, permissions, status
 from rest_framework.authtoken.models import Token
@@ -27,24 +29,17 @@ class LoginView(generics.GenericAPIView):
         return self.token
 
     def get_response(self) -> Response:
-        serializer = self.serializer_class(
-            instance=self.token,
-            context=self.get_serializer_context(),
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = UserSerializer(self.user)
+        response_data: Any = serializer.data
+        response_data["token"] = self.token.key
+        return Response(response_data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs) -> Response:  # type: ignore
         self.request = request
         self.serializer = self.get_serializer(data=self.request.data)
         self.serializer.is_valid(raise_exception=True)
-
         self.login()
-        return Response(
-            {
-                "token": self.token.key,
-            },
-            status=status.HTTP_200_OK,
-        )
+        return self.get_response()
 
 
 class LogoutView(APIView):

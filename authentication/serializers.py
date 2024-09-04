@@ -8,6 +8,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = user_model
         fields = "__all__"
+        # write_only means that the password field will not be returned in
+        # the response
+        extra_kwargs = {"password": {"write_only": True}}
 
 
 class LoginSerializer(serializers.Serializer):
@@ -62,8 +65,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             "phone_number",
             "address",
         ]
-        # write_only means that the password field will not be returned in
-        # the response
         extra_kwargs = {"password": {"write_only": True}}
 
     def validate_password(self, value: str) -> str:
