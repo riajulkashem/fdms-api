@@ -21,19 +21,19 @@ class LoginView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = LoginSerializer
 
-    def login(self):
+    def login(self) -> Token:
         self.user = self.serializer.validated_data["user"]
         self.token, _ = Token.objects.get_or_create(user=self.user)
         return self.token
 
-    def get_response(self):
+    def get_response(self) -> Response:
         serializer = self.serializer_class(
             instance=self.token,
             context=self.get_serializer_context(),
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs) -> Response:  # type: ignore
         self.request = request
         self.serializer = self.get_serializer(data=self.request.data)
         self.serializer.is_valid(raise_exception=True)
@@ -51,7 +51,7 @@ class LogoutView(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs) -> Response:  # type: ignore
         try:
             request.user.auth_token.delete()
         except (AttributeError, ObjectDoesNotExist):
@@ -67,5 +67,5 @@ class UserDetailsView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self):
+    def get_object(self) -> User:
         return self.request.user

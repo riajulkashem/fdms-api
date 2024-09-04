@@ -1,12 +1,12 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from rest_framework import exceptions, serializers
 
-from authentication.models import User
+user_model = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = user_model
         fields = "__all__"
 
 
@@ -14,10 +14,12 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(required=False, allow_blank=True)
     password = serializers.CharField(style={"input_type": "password"})
 
-    def authenticate(self, **kwargs):
+    def authenticate(self, **kwargs) -> user_model | None:  # type: ignore
         return authenticate(self.context["request"], **kwargs)
 
-    def validate_user(self, username, password):
+    def validate_user(
+        self, username: str | None, password: str | None
+    ) -> user_model | None:  # type: ignore
         if username and password:
             return self.authenticate(username=username, password=password)
         else:
@@ -25,14 +27,15 @@ class LoginSerializer(serializers.Serializer):
             raise exceptions.ValidationError(msg)
 
     @staticmethod
-    def validate_auth_user_status(user):
-        if not user.is_active:
+    def validate_auth_user_status(user: user_model) -> None:  # type: ignore
+        if not user.is_active:  # type: ignore
             msg = "User account is disabled."
             raise exceptions.ValidationError(msg)
 
-    def validate(self, attrs):
-        username = attrs.get("username")
-        password = attrs.get("password")
+    def validate(self, attrs: dict) -> dict:
+
+        username: str | None = attrs.get("username")
+        password: str | None = attrs.get("password")
         user = self.validate_user(username, password)
 
         if not user:
@@ -48,7 +51,7 @@ class LoginSerializer(serializers.Serializer):
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = user_model
         fields = [
             "username",
             "email",
@@ -63,16 +66,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         # the response
         extra_kwargs = {"password": {"write_only": True}}
 
-    
-    def validate_password(self, value):
+    def validate_password(self, value: str) -> str:
         """
         Check that the password is strong enough.
         """
-        has_digit = False
-        has_alpha = False
-        has_upper = False
-        has_special = False
-        special_characters = "!@#$%^&*()-_=+[]{}|;:,.<>?"
+        has_digit: bool = False
+        has_alpha: bool = False
+        has_upper: bool = False
+        has_special: bool = False
+        special_characters: str = "!@#$%^&*()-_=+[]{}|;:,.<>?"
 
         if len(value) < 8:
             raise serializers.ValidationError(
@@ -104,6 +106,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             if not has_special:
                 errors.append("at least one special character")
 
-            raise serializers.ValidationError(f"Password must contain {', '.join(errors)}.")
+            raise serializers.ValidationError(
+                f"Password must contain {', '.join(errors)}."
+            )
 
         return value

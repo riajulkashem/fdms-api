@@ -9,7 +9,7 @@ User = get_user_model()
 
 class RegistrationViewTests(APITestCase):
 
-    def test_registration(self):
+    def test_registration(self) -> None:
         url = reverse("authentication:register")
         data = {
             "username": "testuser",
@@ -43,11 +43,11 @@ class RegistrationViewTests(APITestCase):
 
 class LoginViewTests(APITestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = User.objects.create_user(username="testuser", password="Test@1234")
         self.url = reverse("authentication:login")
 
-    def test_login(self):
+    def test_login(self) -> None:
         # Test valid credentials
         response = self.client.post(
             self.url, {"username": "testuser", "password": "Test@1234"}, format="json"
@@ -65,13 +65,13 @@ class LoginViewTests(APITestCase):
 
 class LogoutViewTests(APITestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = User.objects.create_user(username="testuser", password="Test@1234")
         self.token = Token.objects.create(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
         self.url = reverse("authentication:logout")
 
-    def test_logout(self):
+    def test_logout(self) -> None:
         # Test logout with token
         response = self.client.post(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -85,13 +85,13 @@ class LogoutViewTests(APITestCase):
 
 class UserDetailsViewTests(APITestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = User.objects.create_user(username="testuser", password="Test@1234")
         self.token = Token.objects.create(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
         self.url = reverse("authentication:user-detail")
 
-    def test_user_details(self):
+    def test_user_details(self) -> None:
         # Test getting user details
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
