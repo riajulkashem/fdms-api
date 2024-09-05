@@ -6,7 +6,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from authentication.models import User
 from authentication.serializers import (
     LoginSerializer,
     UserRegistrationSerializer,
@@ -62,5 +61,5 @@ class UserDetailsView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self) -> User:
+    def get_object(self) -> Any:
         return self.request.user

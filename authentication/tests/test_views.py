@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
@@ -49,7 +51,7 @@ class LoginViewTests(APITestCase):
 
     def test_login(self) -> None:
         # Test valid credentials
-        response = self.client.post(
+        response: Any = self.client.post(
             self.url, {"username": "testuser", "password": "Test@1234"}, format="json"
         )
         token = Token.objects.get(user=self.user)
