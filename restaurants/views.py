@@ -1,76 +1,78 @@
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
+
+from authentication.permissions import IsOwner, IsOwnerOrEmployeeOrReadOnly
 from restaurants.models import (
+    Category,
     Company,
-    Restaurant,
+    Item,
     Menu,
     Modifier,
-    Category,
-    Item,
     Order,
     OrderItem,
+    Restaurant,
 )
 from restaurants.serializers import (
+    CategorySerializer,
     CompanySerializer,
-    RestaurantSerializer,
+    ItemSerializer,
     MenuSerializer,
     ModifierSerializer,
-    CategorySerializer,
-    ItemSerializer,
-    OrderSerializer,
     OrderItemSerializer,
+    OrderSerializer,
+    RestaurantSerializer,
 )
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticated
 
 
 class CompanyViewSet(ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwner]
 
 
 class RestaurantViewSet(ModelViewSet):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwner]
 
 
 class MenuViewSet(ModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
-    permission_classes = [IsAuthenticated]
-    filterset_fields = ['restaurant']
+    permission_classes = [IsOwnerOrEmployeeOrReadOnly]
+    filterset_fields = ["restaurant"]
 
 
 class ModifierViewSet(ModelViewSet):
     queryset = Modifier.objects.all()
     serializer_class = ModifierSerializer
-    permission_classes = [IsAuthenticated]
-    filterset_fields = ['menu']
+    permission_classes = [IsOwnerOrEmployeeOrReadOnly]
+    filterset_fields = ["menu"]
 
 
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
-    filterset_fields = ['menu']
+    permission_classes = [IsOwnerOrEmployeeOrReadOnly]
+    filterset_fields = ["menu"]
 
 
 class ItemViewSet(ModelViewSet):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
-    permission_classes = [IsAuthenticated]
-    filterset_fields = ['category']
+    permission_classes = [IsOwnerOrEmployeeOrReadOnly]
+    filterset_fields = ["category"]
 
 
 class OrderViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ['restaurant']
+    filterset_fields = ["restaurant"]
 
 
 class OrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ['order']
+    filterset_fields = ["order"]
