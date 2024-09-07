@@ -1,3 +1,6 @@
+from typing import Any
+
+from django.db.models import QuerySet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
@@ -34,36 +37,42 @@ class RestaurantViewSet(ModelViewSet):
     permission_classes = [IsOwner]
 
 
-class MenuViewSet(ModelViewSet):
+class CustomViewSetForEmployee(ModelViewSet):
+    permission_classes = [IsOwnerOrEmployeeOrReadOnly]
+
+    def get_queryset(self) -> QuerySet | None:
+        user: Any = self.request.user
+        if user.user_type == "owner":
+            return self.queryset.filter(owner=user)
+        elif user.user_type == "employee":
+            return self.queryset.filter(employees=user)
+        return self.queryset.none()
+
+
+class MenuViewSet(CustomViewSetForEmployee):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     permission_classes = [IsOwnerOrEmployeeOrReadOnly]
-    filterset_fields = ["restaurant"]
 
-
-class CategoryViewSet(ModelViewSet):
+class CategoryViewSet(CustomViewSetForEmployee):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsOwnerOrEmployeeOrReadOnly]
-    filterset_fields = ["menu"]
 
 
-class ItemViewSet(ModelViewSet):
+class ItemViewSet(CustomViewSetForEmployee):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     permission_classes = [IsOwnerOrEmployeeOrReadOnly]
-    filterset_fields = ["category"]
 
 
 class OrderViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ["restaurant"]
 
 
 class OrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ["order"]
