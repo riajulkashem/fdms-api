@@ -83,21 +83,6 @@ class Menu(OperationLogModel):
         return f"{self.name} - {self.restaurant.name}"
 
 
-class Modifier(OperationLogModel):
-
-    restaurant = models.ForeignKey(
-        Restaurant, on_delete=models.CASCADE, related_name="modfiers"
-    )
-    name = models.CharField(max_length=255)
-    price = models.DecimalField(
-        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
-    )
-    is_available = models.BooleanField(default=True)
-
-    def __str__(self) -> str:
-        return self.name
-
-
 class Category(OperationLogModel):
 
     restaurant = models.ForeignKey(
@@ -125,7 +110,6 @@ class Item(OperationLogModel):
         max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
     )
     is_available = models.BooleanField(default=True)
-    modifiers = models.ManyToManyField(Modifier, related_name="items", blank=True)
 
     def __str__(self) -> str:
         return self.name
@@ -175,7 +159,6 @@ class OrderItem(OperationLogModel):
     price = models.DecimalField(
         max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
     )
-    modifiers = models.ManyToManyField(Modifier, related_name="order_items", blank=True)
 
     def __str__(self) -> str:
         return f"{self.quantity} x {self.item.name} - Order {self.order.order_id}"

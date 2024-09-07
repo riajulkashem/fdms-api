@@ -7,7 +7,6 @@ from restaurants.models import (
     Company,
     Item,
     Menu,
-    Modifier,
     Order,
     OrderItem,
     Restaurant,
@@ -17,7 +16,6 @@ from restaurants.serializers import (
     CompanySerializer,
     ItemSerializer,
     MenuSerializer,
-    ModifierSerializer,
     OrderItemSerializer,
     OrderSerializer,
     RestaurantSerializer,
@@ -41,13 +39,6 @@ class MenuViewSet(ModelViewSet):
     serializer_class = MenuSerializer
     permission_classes = [IsOwnerOrEmployeeOrReadOnly]
     filterset_fields = ["restaurant"]
-
-
-class ModifierViewSet(ModelViewSet):
-    queryset = Modifier.objects.all()
-    serializer_class = ModifierSerializer
-    permission_classes = [IsOwnerOrEmployeeOrReadOnly]
-    filterset_fields = ["menu"]
 
 
 class CategoryViewSet(ModelViewSet):

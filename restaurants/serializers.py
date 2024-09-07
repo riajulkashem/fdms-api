@@ -7,7 +7,6 @@ from restaurants.models import (
     Company,
     Item,
     Menu,
-    Modifier,
     Order,
     OrderItem,
     Restaurant,
@@ -46,12 +45,6 @@ class RestaurantSerializer(CustomModelSerializer):
 class MenuSerializer(CustomModelSerializer):
     class Meta:
         model = Menu
-        fields = "__all__"
-
-
-class ModifierSerializer(CustomModelSerializer):
-    class Meta:
-        model = Modifier
         fields = "__all__"
 
 
