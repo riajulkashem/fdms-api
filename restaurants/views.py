@@ -36,6 +36,12 @@ class RestaurantViewSet(ModelViewSet):
     serializer_class = RestaurantSerializer
     permission_classes = [IsOwner]
 
+    def get_queryset(self) -> QuerySet | None:
+        user: Any = self.request.user
+        if user.user_type == "owner":
+            return self.queryset.filter(owner=user)
+        return self.queryset.none()
+
 
 class CustomViewSetForEmployee(ModelViewSet):
     permission_classes = [IsOwnerOrEmployeeOrReadOnly]
@@ -43,16 +49,17 @@ class CustomViewSetForEmployee(ModelViewSet):
     def get_queryset(self) -> QuerySet | None:
         user: Any = self.request.user
         if user.user_type == "owner":
-            return self.queryset.filter(owner=user)
+            return self.queryset.filter(owner=user)  # type: ignore
         elif user.user_type == "employee":
-            return self.queryset.filter(employees=user)
-        return self.queryset.none()
+            return self.queryset.filter(employees=user)  # type: ignore
+        return self.queryset.none()  # type: ignore
 
 
 class MenuViewSet(CustomViewSetForEmployee):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     permission_classes = [IsOwnerOrEmployeeOrReadOnly]
+
 
 class CategoryViewSet(CustomViewSetForEmployee):
     queryset = Category.objects.all()

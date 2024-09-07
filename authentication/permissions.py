@@ -11,7 +11,7 @@ class IsOwner(permissions.BasePermission):
 
     def has_object_permission(self, request: Request, view: APIView, obj: Any) -> bool:
         # only allowed to the user with usertype is "owner" | object creator
-        if request.user.user_type == "woner" or request.user == obj.user:
+        if request.user.user_type == "woner" or request.user == obj.created_by:
             return True
         return False
 

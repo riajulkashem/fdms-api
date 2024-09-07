@@ -64,3 +64,9 @@ class CustomUserManagerTests(TestCase):
         self.assertEqual(str(self.owner), self.owner.get_full_name())
         self.assertEqual(str(self.employee), self.employee.get_full_name())
         self.assertEqual(str(self.customer), self.customer.get_full_name())
+
+    def test_automatic_profile_creation_on_create_user(self) -> None:
+        # Test if a Profile instance is automatically created when a User is created
+        self.assertIsNotNone(self.owner.owner)
+        self.assertIsNotNone(self.employee.employee)
+        self.assertIsNotNone(self.customer.customer)
